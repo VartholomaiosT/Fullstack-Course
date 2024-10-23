@@ -30,9 +30,9 @@ const Statistics = (props) => {
 };
 
 const StatisticLine = (props) => (
-  <p>
-    {props.text}: {props.value}
-  </p>
+  <tr>
+    <td>{props.text}: </td> <td>{props.value}</td>
+  </tr>
 );
 const App = () => {
   const [good, setGood] = useState(0);
