@@ -44,7 +44,7 @@ const App = () => {
 
   const Winner = () => {
     const maxVotes = Math.max(...allVotes);
-    const mostVotedIndex = allVotes.indexOf(maxVotes); // Find the index of the highest vote
+    const mostVotedIndex = allVotes.indexOf(maxVotes); 
 
     if (maxVotes === 0) {
       return <p>No winner yet</p>;
