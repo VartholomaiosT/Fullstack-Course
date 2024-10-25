@@ -7,7 +7,7 @@ const Total = ({ parts }) => {
   );
   return (
     <p key={parts.id}>
-      <b>total of {totalExercises}exercises</b>
+      <b>total of {totalExercises} exercises</b>
     </p>
   );
 };
