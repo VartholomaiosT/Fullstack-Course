@@ -1,5 +1,5 @@
 import React from "react";
-
+import personsService from "../services/personsService";
 const PersonForm = ({
   newName,
   newNumber,
@@ -18,17 +18,26 @@ const PersonForm = ({
 
   const addPerson = (event) => {
     event.preventDefault();
-    const found = persons.some((person) => person.name === newName);
+    const found = persons?.some((person) => person.name === newName);
 
     if (!found) {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: String(persons.length + 1),
+        id: String((persons?.length || 0) + 1),
       };
-      setPersons(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      personsService
+        .create(personObject)
+        .then((returnedPerson) => {
+          setPersons((prevPersons) =>
+            (prevPersons || []).concat(returnedPerson)
+          );
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.error("Error adding person:", error);
+        });
     } else {
       alert(`${newName} is already added to phonebook`);
     }
