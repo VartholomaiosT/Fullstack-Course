@@ -1,5 +1,6 @@
 import React from "react";
 import personsService from "../services/personsService";
+import Notification from "./Notification";
 const PersonForm = ({
   newName,
   newNumber,
@@ -7,6 +8,7 @@ const PersonForm = ({
   setNewNumber,
   persons,
   setPersons,
+  setSuccessMessage,
 }) => {
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -34,6 +36,10 @@ const PersonForm = ({
           );
           setNewName("");
           setNewNumber("");
+          setSuccessMessage(`Added ${newName}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         })
         .catch((error) => {
           console.error("Error adding person:", error);
