@@ -14,7 +14,6 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    console.log("effect");
     personsService
       .getAll()
       .then((response) => {
