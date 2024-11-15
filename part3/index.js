@@ -50,26 +50,14 @@ app.use(morgan(customFormat));
 // ];
 
 app.get("/api/persons", (request, response) => {
-  Person.findById(request.params.id)
-    .then((person) => {
-      if (person) {
-        response.json(person);
-      } else {
-        response.status(404).end;
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      response.status(400).send({ error: "malformatted id" });
-    });
-  // Person.find({}).then((persons) => {
-  //   response.json(persons);
-  // });
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  Person.findByIdAndDelete(id)
+  Person.findById(id)
     .then((result) => {
       if (result) {
         console.log("Deleted person:", result);
@@ -96,36 +84,54 @@ app.post("/api/persons", (request, response) => {
       error: "Name and number must be provided",
     });
   }
-  Person.findOne({ name }).then((existingPerson) => {
-    if (existingPerson) {
-      return response.status(400).json({
-        error: "Name already exists in the phonebook",
+  Person.findOne({ name })
+    .then((existingPerson) => {
+      if (existingPerson) {
+        return response.status(400).json({
+          error: "Name already exists in the phonebook",
+        });
+      }
+
+      const person = new Person({
+        name: request.body.name,
+        number: request.body.number,
       });
-    }
 
-    const person = new Person({
-      name: request.body.name,
-      number: request.body.number,
-    });
-
-    person.save().then((savedPerson) => {
-      response.json(savedPerson);
-      console.log(savedPerson);
-    });
-  });
+      person.save().then((savedPerson) => {
+        response.json(savedPerson);
+        console.log(savedPerson);
+      });
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
   const date = new Date();
   const count = Person.length;
 
-  response.send(`
+  response
+    .send(
+      `
     <p>Phonebook has info for ${count} people</p>
     <p>${date}</p>
-  `);
+  `
+    )
+    .catch((error) => next(error));
 });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
