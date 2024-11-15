@@ -4,7 +4,6 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Person = require("./models/person");
-const person = require("./models/person");
 require("dotenv").config();
 app.use(cors());
 app.use(express.json());
@@ -102,7 +101,9 @@ app.post("/api/persons", (request, response) => {
         console.log(savedPerson);
       });
     })
-    .catch((error) => next(error));
+    .catch((error) => {
+      console.log(error.response.data.error), next(error);
+    });
 });
 
 app.get("/info", (request, response) => {
@@ -123,15 +124,19 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
-
   next(error);
 };
 
+app.use(unknownEndpoint);
 app.use(errorHandler);
