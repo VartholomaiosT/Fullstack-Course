@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const { info, error } = require("./utils/logger");
 const config = require("./utils/config");
 const middleware = require("./utils/middleware");
-const blogsRouter = require("./controlers/blog");
+const blogsRouter = require("./controllers/blog");
 
 morgan.token("body", (req) => JSON.stringify(req.body));
 const mongoose = require("mongoose");
