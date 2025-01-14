@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
-import blogService from "./services/blogs";
+import React, { useState, useEffect } from "react";
 import loginService from "./services/login";
+import blogService from "./services/blogs";
+import Blog from "./components/Blog";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -11,6 +12,15 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
+  }, []);
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
   }, []);
 
   const handleLogin = async (event) => {
@@ -26,7 +36,6 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-      setToken(user.token);
     } catch (exception) {
       setErrorMessage("Wrong credentials");
       setTimeout(() => {
@@ -39,9 +48,65 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
   };
+
+  const CreateForm = () => {
+    const [newTitle, setNewTitle] = useState("");
+    const [newAuthor, setNewAuthor] = useState("");
+    const [newUrl, setNewUrl] = useState("");
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      try {
+        const newBlog = await blogService.addBlog({
+          title: newTitle,
+          author: newAuthor,
+          url: newUrl,
+        });
+        setBlogs(blogs.concat(newBlog));
+        setNewTitle("");
+        setNewAuthor("");
+        setNewUrl("");
+      } catch (exception) {
+        setErrorMessage("Failed to create a new blog");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      }
+    };
+
+    return (
+      <form onSubmit={handleSubmit}>
+        <h1>create new</h1>
+        <div>
+          Title:{" "}
+          <input
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
+          />
+        </div>
+        <div>
+          Author:{" "}
+          <input
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
+          />
+        </div>
+        <div>
+          URL:{" "}
+          <input
+            value={newUrl}
+            onChange={({ target }) => setNewUrl(target.value)}
+          />
+        </div>
+        <button type="submit">Create</button>
+      </form>
+    );
+  };
+
   const loginForm = () => (
     <div>
-      <h1>log in to application</h1>
+      <h2>Login</h2>
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -69,26 +134,16 @@ const App = () => {
   const blogForm = () => (
     <div>
       <h2>blogs</h2>
-      <p>{user.username} logged-in</p>
+      <p>{user && user.name ? user.name : user.username} logged-in</p>
+      <button onClick={handleLogout}>logout</button>
+      <CreateForm />
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
     </div>
   );
 
-  return (
-    <div>
-      {user === null ? (
-        loginForm()
-      ) : (
-        <div>
-          <p>{user.name} logged-in</p>{" "}
-          <button onClick={handleLogout}>logout</button>
-          {blogForm()}
-        </div>
-      )}
-    </div>
-  );
+  return <div>{user === null ? loginForm() : blogForm()}</div>;
 };
 
 export default App;
