@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 import Blog from "./components/Blog";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState({
+    message: null,
+    type: null,
+  });
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -36,11 +40,9 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
+      setNotification({ message: "Login successful!", type: "success" });
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      setNotification({ message: "Wrong credentials", type: "error" });
     }
   };
 
@@ -66,16 +68,18 @@ const App = () => {
         setNewTitle("");
         setNewAuthor("");
         setNewUrl("");
+        setNotification({
+          message: `a new blog ${newTitle} by ${newAuthor} added`,
+          type: "success",
+        });
       } catch (exception) {
-        setErrorMessage("Failed to create a new blog");
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
+        setNotification({ message: "Failed to add blog", type: "error" });
       }
     };
 
     return (
       <form onSubmit={handleSubmit}>
+        <Notification message={notification.message} type={notification.type} />
         <h1>create new</h1>
         <div>
           Title:{" "}
@@ -105,8 +109,8 @@ const App = () => {
 
   const loginForm = () => (
     <div>
+      <Notification message={notification.message} type={notification.type} />
       <h2>Login</h2>
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
       <form onSubmit={handleLogin}>
         <div>
           username
