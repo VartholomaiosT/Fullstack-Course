@@ -2,6 +2,7 @@ const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 const getTokenFrom = (request) => {
   const authorization = request.get("authorization");
@@ -40,18 +41,18 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deletedBlog = await Blog.findByIdAndRemove(id);
+blogsRouter.delete("/:id", async (request, response) => {
+  if (!request.user) {
+    return response.status(401).json({ error: "token invalid" });
+  }
+  const user = request.user;
+  const blogSelected = await Blog.findById(request.params.id);
 
-    if (!deletedBlog) {
-      return res.status(404).json({ error: "Blog not found" });
-    }
-
-    res.status(204).end();
-  } catch (error) {
-    res.status(400).json({ error: "malformatted id" });
+  if (blogSelected.user.toString() === user.id.toString()) {
+    await Blog.findByIdAndDelete(request.params.id);
+    response.status(204).end();
+  } else {
+    response.status(401).json({ error: "This user cannot delete this blog" });
   }
 });
 
