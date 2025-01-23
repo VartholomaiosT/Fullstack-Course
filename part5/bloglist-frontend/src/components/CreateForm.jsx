@@ -18,7 +18,6 @@ const CreateForm = ({ blogs, setBlogs, setNotification, createFormRef }) => {
         author: newAuthor,
         url: newUrl,
       };
-      // Assuming blogService.create is a function that sends a POST request to create a new blog
       const returnedBlog = await blogService.create(newBlog);
       setBlogs(blogs.concat(returnedBlog));
       setNotification({

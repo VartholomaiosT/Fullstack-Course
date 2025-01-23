@@ -44,12 +44,12 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 
   return (
     <div style={blogStyle} className="blog">
-      <div>
+      <div className="blog-title-author">
         {blog.title} {blog.author}{" "}
         <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
       </div>
       {visible && (
-        <div>
+        <div className="blog-details">
           <p>{blog.url}</p>
           <p>
             likes {blog.likes} <button onClick={handleLike}>like</button>
