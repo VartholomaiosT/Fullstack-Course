@@ -24,7 +24,9 @@ const BlogForm = ({
     <div>
       <h2>blogs</h2>
       <p>{user && user.name ? user.name : user.username} logged-in</p>
-      <button onClick={handleLogout}>logout</button>
+      <button id="logout" onClick={handleLogout}>
+        logout
+      </button>
       <Notification message={notification.message} type={notification.type} />
       <Togglable buttonLabel="new blog" ref={createFormRef}>
         <CreateForm
