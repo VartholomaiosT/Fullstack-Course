@@ -43,6 +43,7 @@ const CreateForm = ({ blogs, setBlogs, setNotification, createFormRef }) => {
         <div>
           Title:
           <input
+            id="title"
             type="text"
             value={newTitle}
             onChange={handleTitleChange}
@@ -52,6 +53,7 @@ const CreateForm = ({ blogs, setBlogs, setNotification, createFormRef }) => {
         <div>
           Author:
           <input
+            id="author"
             type="text"
             value={newAuthor}
             onChange={handleAuthorChange}
@@ -61,6 +63,7 @@ const CreateForm = ({ blogs, setBlogs, setNotification, createFormRef }) => {
         <div>
           URL:
           <input
+            id="url"
             type="text"
             value={newUrl}
             onChange={handleUrlChange}
