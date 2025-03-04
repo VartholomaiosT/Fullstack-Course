@@ -73,7 +73,12 @@
     {
       "id": "e9b7",
       "content": "first",
-      "votes": 1
+      "votes": 2
+    },
+    {
+      "id": "ab4c",
+      "content": "first",
+      "votes": 0
     }
   ]
 }
