@@ -33,7 +33,42 @@
     {
       "id": "140e",
       "content": "test",
-      "important": false
+      "important": false,
+      "votes": null
+    },
+    {
+      "id": "c340",
+      "content": "test2",
+      "important": false,
+      "votes": null
+    },
+    {
+      "id": "080c",
+      "content": "test33",
+      "important": false,
+      "votes": null
+    },
+    {
+      "id": "0ade",
+      "content": "1",
+      "important": false,
+      "votes": null
+    },
+    {
+      "id": "11d6",
+      "content": "1",
+      "important": false,
+      "votes": 1
+    },
+    {
+      "id": "351a",
+      "content": "new anecdote",
+      "votes": 4
+    },
+    {
+      "id": "ed61",
+      "content": "",
+      "votes": 0
     }
   ]
 }
